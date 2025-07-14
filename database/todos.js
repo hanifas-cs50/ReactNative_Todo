@@ -2,43 +2,37 @@ import { getDatabase } from "./db";
 
 const getTodos = async () => {
   const db = getDatabase();
-  return await db.getAllAsync(`SELECT * FROM todos;`);
+  const rows = await db.getAllAsync("SELECT * FROM todos;");
+  return rows;
 };
 
 const addTodo = async (title) => {
+  console.log("Before insert: ", title);
   const db = getDatabase();
-  return await db.runAsync(
-    `INSERT INTO todos ("title") VALUES (:title);`,
-    { title }
+  const inserted = await db.runAsync(
+    `INSERT INTO todos (title) VALUES (:title);`,
+    { ":title": title }
   );
+  console.log("After insert: ", title);
+
+  const rows = await db.getAllAsync(`SELECT * FROM todos;`);
+  console.log("[debugTestInsert] Rows:", rows);
+  return inserted;
 };
 
-const updateTodo = async (id, title, status) => {
-  const db = getDatabase();
-  return await db.runAsync(
-    `UPDATE todos SET 
-    title = :title,
-    status = :status
-    WHERE id = :id;`,
-    { title, status, id }
-  );
-};
 const checkTodo = async (id, status) => {
   const db = getDatabase();
   return await db.runAsync(
     `UPDATE todos SET 
     status = :status
     WHERE id = :id;`,
-    { status, id }
+    { ":status": status, ":id": id }
   );
 };
 
 const deleteTodo = async (id) => {
   const db = getDatabase();
-  return await db.runAsync(
-    `DELETE FROM todos WHERE id = :id;`, 
-    { id }
-  );
+  return await db.runAsync(`DELETE FROM todos WHERE id = :id;`, { ":id": id });
 };
 
-export { getTodos, addTodo, updateTodo, checkTodo, deleteTodo };
+export { getTodos, addTodo, checkTodo, deleteTodo };
