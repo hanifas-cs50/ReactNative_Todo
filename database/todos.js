@@ -1,38 +1,56 @@
-import { getDatabase } from "./db";
+import { getDatabase } from "./index";
 
 const getTodos = async () => {
-  const db = getDatabase();
+  const db = await getDatabase();
   const rows = await db.getAllAsync("SELECT * FROM todos;");
+  // console.log(`[getTodos] Get all todos.`);
   return rows;
 };
 
 const addTodo = async (title) => {
-  console.log("Before insert: ", title);
-  const db = getDatabase();
-  const inserted = await db.runAsync(
-    `INSERT INTO todos (title) VALUES (:title);`,
-    { ":title": title }
-  );
-  console.log("After insert: ", title);
-
-  const rows = await db.getAllAsync(`SELECT * FROM todos;`);
-  console.log("[debugTestInsert] Rows:", rows);
-  return inserted;
+  const db = await getDatabase();
+  try {
+    const result = await db.runAsync(
+      `INSERT INTO todos (title) VALUES (:title);`,
+      { ":title": title }
+    );
+    // console.log(`[addTodo] Inserted: "${title}" with result:`, result);
+    return result;
+  } catch (err) {
+    console.error("[addTodo] Failed to insert:", err);
+    throw err;
+  }
 };
 
 const checkTodo = async (id, status) => {
-  const db = getDatabase();
-  return await db.runAsync(
-    `UPDATE todos SET 
-    status = :status
-    WHERE id = :id;`,
-    { ":status": status, ":id": id }
-  );
+  const db = await getDatabase();
+  try {
+    const result = await db.runAsync(
+      `UPDATE todos SET 
+      status = :status
+      WHERE id = :id;`,
+      { ":status": status, ":id": id }
+    );
+    // console.log(
+    //   `[checkTodo] Updated: id="${id}" to make the status="${status}" with result:`,
+    //   result
+    // );
+    return result;
+  } catch (err) {
+    console.error("[checkTodo] Failed to update:", err);
+    throw err;
+  }
 };
 
 const deleteTodo = async (id) => {
-  const db = getDatabase();
-  return await db.runAsync(`DELETE FROM todos WHERE id = :id;`, { ":id": id });
+  const db = await getDatabase();
+  try {
+    const result = await db.runAsync(`DELETE FROM todos WHERE id = :id;`, {
+      ":id": id,
+    });
+    // console.log(`[deleteTodo] Deleted: "${id}" with result:`, result);
+    return result;
+  } catch (err) {}
 };
 
 export { getTodos, addTodo, checkTodo, deleteTodo };

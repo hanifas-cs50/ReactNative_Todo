@@ -1,24 +1,35 @@
-import { useEffect, useRef, useState } from "react";
-import { Button, FlatList, StyleSheet, Text, TextInput, View } from "react-native";
-import { initDatabase } from "../database/db";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  Button,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Pressable,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { initDatabase } from "../database";
 import { deleteTodo, checkTodo, addTodo, getTodos } from "../database/todos";
 
-const Home = () => {
+export default function App() {
+  const inputRef = useRef(null);
   const [todos, setTodos] = useState([]);
-  const textRef = useRef(''); // <-- Initialize as empty string
+  const [text, setText] = useState("");
 
   const loadTodos = async () => {
     setTodos(await getTodos());
   };
 
   const handleAdd = async () => {
-    const text = textRef.current.trim();
-    if (!text) return;
+    const trimmed = text.trim();
+    if (!trimmed) return;
 
-    await addTodo(text);
+    await addTodo(trimmed);
+    setText("");
     await loadTodos();
-
-    textRef.current = '';
   };
 
   const handleCheck = async (id, currStatus) => {
@@ -32,36 +43,121 @@ const Home = () => {
     await loadTodos();
   };
 
+  const initDb = async () => {
+    await initDatabase();
+    await loadTodos();
+  };
+
   useEffect(() => {
-    (async () => {
-      await initDatabase();
-      await loadTodos();
-      await addTodo("test");
-    })();
+    initDb();
   }, []);
 
   return (
-    <View>
-      <Text>Home</Text>
-      <TextInput
-        placeholder="New todo"
-        onChangeText={(text) => {
-          textRef.current = text;
-        }}
-      />
-      <Button title="Add Todo" onPress={handleAdd} />
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      keyboardVerticalOffset={80}
+    >
+      <View style={styles.container}>
+        <Text style={{ marginBottom: 10 }}>
+          This is hanifas-cs50's work (my work :v), thanks for viewing it
+        </Text>
 
-      <FlatList
-        data={todos}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.title}</Text>
-          </View>
-        )}
-      />
-    </View>
+        <View style={styles.inputGroup}>
+          <TextInput
+            ref={inputRef}
+            style={styles.input}
+            placeholder="New todo..."
+            value={text}
+            onChangeText={setText}
+          />
+          <Button title="Add todo" onPress={handleAdd} />
+        </View>
+
+        <ScrollView
+          style={styles.scrollView}
+          keyboardShouldPersistTaps="handled"
+        >
+          {todos.map((item) => (
+            <View key={item.id} style={styles.todoContainer}>
+              <Text
+                style={{
+                  textDecorationLine:
+                    item.status === 2 ? "line-through" : "none",
+                }}
+              >
+                {item.title}
+              </Text>
+              <View style={styles.todoButtonWrapper}>
+                <Pressable
+                  onPress={() => handleCheck(item.id, item.status)}
+                  style={styles.checkButton}
+                >
+                  <Text style={styles.buttonText}>Check</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => handleDelete(item.id)}
+                  style={styles.deleteButton}
+                >
+                  <Text style={styles.buttonText}>Delete</Text>
+                </Pressable>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
+        <StatusBar style="auto" />
+      </View>
+    </KeyboardAvoidingView>
   );
-};
+}
 
-export default Home;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 36,
+    paddingHorizontal: 20,
+    backgroundColor: "#fff",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    padding: 10,
+    borderRadius: 4,
+  },
+  inputGroup: {
+    width: "100%",
+    gap: 10,
+    marginBottom: 10,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  todoContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#e2e8f0",
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginBottom: 8,
+    borderRadius: 5,
+  },
+  todoButtonWrapper: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  checkButton: {
+    backgroundColor: "#3b82f6",
+    padding: 10,
+    borderRadius: 3,
+  },
+  deleteButton: {
+    backgroundColor: "#f43f5e",
+    padding: 10,
+    borderRadius: 3,
+  },
+  buttonText: {
+    color: "#fff",
+  },
+});

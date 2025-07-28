@@ -7,7 +7,7 @@ const initDatabase = async () => {
     return database;
   }
 
-  database = await SQLite.openDatabaseAsync("todos.db");
+  database = await SQLite.openDatabaseSync("todos.db");
   await database.execAsync(`
     CREATE TABLE IF NOT EXISTS todos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -16,6 +16,7 @@ const initDatabase = async () => {
       created_at TEXT NOT NULL DEFAULT (datetime("now"))
     );
   `);
+  console.log("[DB] Table created or already exists.");
 
   return database;
 };
