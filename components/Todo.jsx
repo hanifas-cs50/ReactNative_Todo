@@ -5,11 +5,11 @@ import {
   Pressable,
 } from "react-native";
 
-const Todo = ({ data, handleCheck, handleDelete }) => {
+const Todo = ({ data, last, handleCheck, handleDelete }) => {
   const { id, title, status } = data;
 
   return (
-    <View style={styles.todoContainer}>
+    <View style={[styles.todoContainer, { marginBottom: last ? 0 : 10 }]}>
       <Text
         style={{
           color: status === 2 ? "#777" : "#000",
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingLeft: 12,
     paddingRight: 8,
-    marginBottom: 8,
     borderRadius: 5,
   },
   todoButtonWrapper: {

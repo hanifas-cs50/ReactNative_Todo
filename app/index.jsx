@@ -12,8 +12,10 @@ import {
 import { initDatabase } from "../database";
 import { deleteTodo, checkTodo, addTodo, getTodos } from "../database/todos";
 import Todo from "../components/Todo";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function App() {
+  const insets = useSafeAreaInsets();
   const inputRef = useRef(null);
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
@@ -56,7 +58,15 @@ export default function App() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            paddingTop: insets.top + 20,
+            paddingBottom: 12,
+          },
+        ]}
+      >
         <Text style={styles.title}>React Native TODO App</Text>
 
         <View style={styles.inputGroup}>
@@ -74,14 +84,18 @@ export default function App() {
           style={styles.scrollView}
           keyboardShouldPersistTaps="handled"
         >
-          {todos.map((item) => (
-            <Todo
-              key={item.id}
-              data={item}
-              handleCheck={handleCheck}
-              handleDelete={handleDelete}
-            />
-          ))}
+          {todos.map((item, index) => {
+            const last = todos.length - 1 === index;
+            return (
+              <Todo
+                key={item.id}
+                data={item}
+                last={last}
+                handleCheck={handleCheck}
+                handleDelete={handleDelete}
+              />
+            );
+          })}
         </ScrollView>
       </View>
     </KeyboardAvoidingView>
@@ -92,8 +106,6 @@ const styles = StyleSheet.create({
   container: {
     height: "100%",
     flex: 1,
-    paddingTop: 48,
-    paddingBottom: 18,
     paddingHorizontal: 20,
     backgroundColor: "#fff",
   },
@@ -113,8 +125,5 @@ const styles = StyleSheet.create({
     width: "100%",
     gap: 10,
     marginBottom: 10,
-  },
-  scrollView: {
-    flex: 1,
   },
 });
