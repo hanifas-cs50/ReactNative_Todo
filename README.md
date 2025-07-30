@@ -24,8 +24,8 @@ This is my first attempt at making an android app, I'm using react native with e
 2. **Clone this repository**
 
    ```bash
-   git clone https://github.com/your-username/react-native-todo-app.git
-   cd react-native-todo-app
+   git clone https://github.com/hanifas-cs50/ReactNative_Todo.git
+   cd ReactNative_Todo
    ```
 
 3. **Install dependencies**
@@ -52,5 +52,6 @@ This is my first attempt at making an android app, I'm using react native with e
 
 - **v1:** First version, first attempt using react native using expo, I plan to make a CRUD with SQLite, but I'm struggling on making a create function, the simplest one :(
 - **v2:** Second version, done for now, it's a basic working app with SQLite as it's database, I'll update if I have time, for now, I'll move on to weather app.
+- **v3:** Third version, UI improvements, added an about page.
 
 (Note on how I fixed the first version, apparently I did not initialize the database, after that struggle the rest was smooth sailing)
