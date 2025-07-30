@@ -1,6 +1,6 @@
 # React Native Todo App
 
-This is my first attempt at making an android app, I'm using react native with expo due to hardware limitations (my current device is not powerful enough to handle android studio), but despite the limitations, this app is a great starting point to learn mobile development with modern tools.
+This is my first attempt at making an android app, I'm using react native with expo due to hardware limitations (my current device is not powerful enough to handle android studio), but despite the limitations, this app is a great starting point to learn mobile development.
 
 ## Features
 
