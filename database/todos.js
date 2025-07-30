@@ -9,10 +9,11 @@ const getTodos = async () => {
 
 const addTodo = async (title) => {
   const db = await getDatabase();
+  const now = new Date().toISOString();
   try {
     const result = await db.runAsync(
-      `INSERT INTO todos (title) VALUES (:title);`,
-      { ":title": title }
+      `INSERT INTO todos (title, created_at) VALUES (:title, :created_at);`,
+      { ":title": title, ":created_at": now }
     );
     // console.log(`[addTodo] Inserted: "${title}" with result:`, result);
     return result;

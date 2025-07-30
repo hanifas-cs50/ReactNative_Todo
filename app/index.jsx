@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Button,
   KeyboardAvoidingView,
@@ -8,11 +8,10 @@ import {
   Text,
   TextInput,
   View,
-  Pressable,
 } from "react-native";
-import { StatusBar } from "expo-status-bar";
 import { initDatabase } from "../database";
 import { deleteTodo, checkTodo, addTodo, getTodos } from "../database/todos";
+import Todo from "../components/Todo";
 
 export default function App() {
   const inputRef = useRef(null);
@@ -56,12 +55,9 @@ export default function App() {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      keyboardVerticalOffset={80}
     >
       <View style={styles.container}>
-        <Text style={{ marginBottom: 10 }}>
-          This is hanifas-cs50's work (my work :v), thanks for viewing it
-        </Text>
+        <Text style={styles.title}>React Native TODO App</Text>
 
         <View style={styles.inputGroup}>
           <TextInput
@@ -79,34 +75,14 @@ export default function App() {
           keyboardShouldPersistTaps="handled"
         >
           {todos.map((item) => (
-            <View key={item.id} style={styles.todoContainer}>
-              <Text
-                style={{
-                  textDecorationLine:
-                    item.status === 2 ? "line-through" : "none",
-                }}
-              >
-                {item.title}
-              </Text>
-              <View style={styles.todoButtonWrapper}>
-                <Pressable
-                  onPress={() => handleCheck(item.id, item.status)}
-                  style={styles.checkButton}
-                >
-                  <Text style={styles.buttonText}>Check</Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => handleDelete(item.id)}
-                  style={styles.deleteButton}
-                >
-                  <Text style={styles.buttonText}>Delete</Text>
-                </Pressable>
-              </View>
-            </View>
+            <Todo
+              key={item.id}
+              data={item}
+              handleCheck={handleCheck}
+              handleDelete={handleDelete}
+            />
           ))}
         </ScrollView>
-
-        <StatusBar style="auto" />
       </View>
     </KeyboardAvoidingView>
   );
@@ -114,10 +90,18 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
+    height: "100%",
     flex: 1,
-    paddingTop: 36,
+    paddingTop: 48,
+    paddingBottom: 18,
     paddingHorizontal: 20,
     backgroundColor: "#fff",
+  },
+  title: {
+    marginBottom: 12,
+    fontWeight: "bold",
+    fontSize: 24,
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
@@ -132,32 +116,5 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
-  },
-  todoContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    backgroundColor: "#e2e8f0",
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    marginBottom: 8,
-    borderRadius: 5,
-  },
-  todoButtonWrapper: {
-    flexDirection: "row",
-    gap: 8,
-  },
-  checkButton: {
-    backgroundColor: "#3b82f6",
-    padding: 10,
-    borderRadius: 3,
-  },
-  deleteButton: {
-    backgroundColor: "#f43f5e",
-    padding: 10,
-    borderRadius: 3,
-  },
-  buttonText: {
-    color: "#fff",
   },
 });
