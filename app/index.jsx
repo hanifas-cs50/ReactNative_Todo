@@ -5,14 +5,14 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
-  View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { initDatabase } from "../database";
 import { deleteTodo, checkTodo, addTodo, getTodos } from "../database/todos";
 import Todo from "../components/Todo";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ThemedView from "../components/themed/ThemedView";
+import ThemedText from "../components/themed/ThemedText";
+import ThemedInput from "../components/themed/ThemedInput";
 
 export default function App() {
   const insets = useSafeAreaInsets();
@@ -58,19 +58,18 @@ export default function App() {
       style={{ flex: 1 }}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <View
+      <ThemedView
         style={[
           styles.container,
           {
             paddingTop: insets.top + 20,
-            paddingBottom: 12,
           },
         ]}
       >
-        <Text style={styles.title}>React Native TODO App</Text>
+        <ThemedText style={styles.title}>React Native TODO App</ThemedText>
 
-        <View style={styles.inputGroup}>
-          <TextInput
+        <ThemedView style={styles.inputGroup}>
+          <ThemedInput
             ref={inputRef}
             style={styles.input}
             placeholder="New todo..."
@@ -78,7 +77,7 @@ export default function App() {
             onChangeText={setText}
           />
           <Button title="Add todo" onPress={handleAdd} />
-        </View>
+        </ThemedView>
 
         <ScrollView
           style={styles.scrollView}
@@ -97,7 +96,7 @@ export default function App() {
             );
           })}
         </ScrollView>
-      </View>
+      </ThemedView>
     </KeyboardAvoidingView>
   );
 }
@@ -107,12 +106,12 @@ const styles = StyleSheet.create({
     height: "100%",
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: "#fff",
+    paddingBottom: 20,
   },
   title: {
     marginBottom: 12,
-    fontWeight: "bold",
     fontSize: 24,
+    fontWeight: "bold",
     textAlign: "center",
   },
   input: {
